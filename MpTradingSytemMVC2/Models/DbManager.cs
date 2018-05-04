@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Helpers;
 
@@ -15,17 +16,29 @@ namespace MpTradingSytemMVC2.Models
         private string constring;
         private DataSet ds;
 
-        public DataSet ExecSql(String query)
+        public DataSet ExecSql(String query, SqlConnection mcon = null)
         {
             try
             {
-                constring = System.Configuration.ConfigurationManager.ConnectionStrings["MPTradingSystemConnection"].ConnectionString;
-                con = new SqlConnection(constring);
+                if (mcon == null)
+                {
+                    constring = System.Configuration.ConfigurationManager.ConnectionStrings["ProdAllConnection"].ConnectionString;
+                    con = new SqlConnection(constring);
+                }
+                else
+                {
+                    con = mcon;
+                }
+
 
                 ds = new DataSet();
                 SqlDataAdapter dataAdapter = new SqlDataAdapter(query, con);
                 SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
-                con.Open();
+                if (con.State == System.Data.ConnectionState.Closed)
+                {
+                    con.Open();
+
+                }
                 dataAdapter.Fill(ds, "table");
 
             }
@@ -42,9 +55,66 @@ namespace MpTradingSytemMVC2.Models
             return ds;
         }
 
+
+
+        public DataSet execStored(String stored, List<parameter> oParamaters, SqlConnection mcon = null, SqlTransaction tran = null, CommandType cmdType = CommandType.StoredProcedure)
+        {
+            int nrow;
+            DataSet ds = new DataSet();
+            if (mcon == null)
+            {
+                constring = System.Configuration.ConfigurationManager.ConnectionStrings["ProdAllConnection"].ConnectionString;
+                con = new SqlConnection(constring);
+            }
+            else
+            {
+                con = mcon;
+            }
+
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+
+            }
+
+            //SqlDataAdapter dataAdapter = new SqlDataAdapter(stored, con);
+            //SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+            //commandBuilder.
+
+            SqlCommand myCommand = new SqlCommand(stored, con);
+            myCommand.CommandType = cmdType;
+
+            if (tran != null)
+            {
+                myCommand.Transaction = tran;
+            }
+
+
+            FieldInfo[] fields = new FieldInfo[oParamaters.Count];
+
+            fields = oParamaters.GetType().GetFields();
+
+
+            foreach (parameter param in oParamaters)
+            {
+                myCommand.Parameters.Add(param.namePar, param.type);
+                myCommand.Parameters[param.namePar].Value = param.value;
+            }
+
+            SqlDataAdapter da = new SqlDataAdapter();
+            da.SelectCommand = myCommand;
+
+            da.Fill(ds);
+
+            //nrow = myCommand.ExecuteNonQuery();
+            myCommand.Dispose();
+            return ds;
+        }
+
+
         //Guida http://www.c-sharpcorner.com/code/2910/mvc-web-grid-using-dynamic-data-table.aspx     
 
-        public CurrentReport getDataTableForGridView(String sql, DataTable mDt = null)
+        public CurrentReport getDataTableForGridView(String sql, DataTable mDt = null, Boolean addEdit = false)
         {
             CurrentReport rp = new CurrentReport();
             DataTable dt = new DataTable();
@@ -88,35 +158,37 @@ namespace MpTradingSytemMVC2.Models
             }
 
 
-            columns.Add(new WebGridColumn()
+            if (addEdit)
             {
-                Format = (item) =>
+                columns.Add(new WebGridColumn()
                 {
-                    return new HtmlString(string.Format("<a href=/Operazioni/Details?id={0}>Dettagli</a>", item.ID_OPERAZIONE));
-                }
-            });
+                    Format = (item) =>
+                    {
+                        return new HtmlString(string.Format("<a href=/Operazioni/Details?id={0}>Dettagli</a>", item.ID_OPERAZIONE));
+                    }
+                });
 
 
 
-            columns.Add(new WebGridColumn()
-            {
-                Format = (item) =>
+                columns.Add(new WebGridColumn()
                 {
-                    return new HtmlString(string.Format("<a href=/Operazioni/Edit?id={0}>Modifica</a>", item.ID_OPERAZIONE));
-                }
-            });
+                    Format = (item) =>
+                    {
+                        return new HtmlString(string.Format("<a href=/Operazioni/Edit?id={0}>Modifica</a>", item.ID_OPERAZIONE));
+                    }
+                });
 
 
 
-            columns.Add(new WebGridColumn()
-            {
-                Format = (item) =>
+                columns.Add(new WebGridColumn()
                 {
-                    return new HtmlString(string.Format("<a href=/Operazioni/Delete?id={0}>Elimina</a>", item.ID_OPERAZIONE));
-                }
-            });
+                    Format = (item) =>
+                    {
+                        return new HtmlString(string.Format("<a href=/Operazioni/Delete?id={0}>Elimina</a>", item.ID_OPERAZIONE));
+                    }
+                });
 
-
+            }
 
 
             //columns.Add(new WebGridColumn()
@@ -154,6 +226,18 @@ namespace MpTradingSytemMVC2.Models
             }
             return data;
         }
+
+    }
+
+
+    public class parameter
+    {
+        public String namePar { get; set; }
+        public SqlDbType type { get; set; }
+
+        public int size;
+
+        public dynamic value;
 
     }
 }

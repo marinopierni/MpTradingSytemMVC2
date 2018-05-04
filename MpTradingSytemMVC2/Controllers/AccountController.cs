@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MpTradingSytemMVC2.Models;
+using System.Web.Security;
 
 namespace MpTradingSytemMVC2.Controllers
 {
@@ -73,23 +74,36 @@ namespace MpTradingSytemMVC2.Controllers
                 return View(model);
             }
 
-            // Questa opzione non calcola il numero di tentativi di accesso non riusciti per il blocco dell'account
-            // Per abilitare il conteggio degli errori di password per attivare il blocco, impostare shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    // return RedirectToLocal(returnUrl);
-                    return RedirectToAction("Index", "Prezzi");
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Tentativo di accesso non valido.");
-                    return View(model);
-            }
+
+
+
+
+            FormsAuthentication.SetAuthCookie(model.Email, false);
+            var authTicket = new FormsAuthenticationTicket(1, user.Email, DateTime.Now, DateTime.Now.AddMinutes(20), false, user.Roles);
+            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+            HttpContext.Response.Cookies.Add(authCookie);
+            return RedirectToAction("Index", "Home");
+
+            //// Questa opzione non calcola il numero di tentativi di accesso non riusciti per il blocco dell'account
+            //// Per abilitare il conteggio degli errori di password per attivare il blocco, impostare shouldLockout: true
+            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            //switch (result)
+            //{
+            //    case SignInStatus.Success:
+            //        // return RedirectToLocal(returnUrl);
+            //        return RedirectToAction("Index", "Prezzi");
+            //    case SignInStatus.LockedOut:
+            //        return View("Lockout");
+            //    case SignInStatus.RequiresVerification:
+            //        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+            //    case SignInStatus.Failure:
+            //    default:
+            //        ModelState.AddModelError("", "Tentativo di accesso non valido.");
+            //        return View(model);
+            //}
+
+            return View(model);
         }
 
         //
