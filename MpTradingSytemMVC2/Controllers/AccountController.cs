@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MpTradingSytemMVC2.Models;
 using System.Web.Security;
+using System.Data;
 
 namespace MpTradingSytemMVC2.Controllers
 {
@@ -74,16 +75,30 @@ namespace MpTradingSytemMVC2.Controllers
                 return View(model);
             }
 
+            DbManager accM = new DbManager();
 
+            DataTable dtCli = new DataTable();
+            dtCli = accM.ExecSql("Select * from dbo.Utenti where UserName='" + model.Email.ToString() + "' and Password= '" + model.Password.ToString() + "' ").Tables[0];
 
+            if (dtCli.Rows.Count > 0)
+            {
+                //?Guida https://www.codeproject.com/Articles/1111522/Custom-Authentication-and-Authorization-in-MVC
 
+                FormsAuthentication.SetAuthCookie(model.Email, false);
+                var authTicket = new FormsAuthenticationTicket(1, model.Email.ToString(), DateTime.Now, DateTime.Now.AddMinutes(20), false, "");
+                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                Request.IsAuthenticated = true;
+                HttpContext.Response.Cookies.Add(authCookie);
+                return RedirectToAction("Index", "Home");
 
-            FormsAuthentication.SetAuthCookie(model.Email, false);
-            var authTicket = new FormsAuthenticationTicket(1, user.Email, DateTime.Now, DateTime.Now.AddMinutes(20), false, user.Roles);
-            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-            HttpContext.Response.Cookies.Add(authCookie);
-            return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Tentativo di accesso non valido.");
+                 return View(model);
+            }
+
 
             //// Questa opzione non calcola il numero di tentativi di accesso non riusciti per il blocco dell'account
             //// Per abilitare il conteggio degli errori di password per attivare il blocco, impostare shouldLockout: true

@@ -49,8 +49,8 @@ namespace MpTradingSytemMVC2.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Posta elettronica")]
-        [EmailAddress]
+        [Display(Name = "UserName")]
+        //[EmailAddress]
         public string Email { get; set; }
 
         [Required]

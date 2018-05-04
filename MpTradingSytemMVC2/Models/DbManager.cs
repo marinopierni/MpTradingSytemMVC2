@@ -22,7 +22,7 @@ namespace MpTradingSytemMVC2.Models
             {
                 if (mcon == null)
                 {
-                    constring = System.Configuration.ConfigurationManager.ConnectionStrings["ProdAllConnection"].ConnectionString;
+                    constring = System.Configuration.ConfigurationManager.ConnectionStrings["MPTradingSystemConnection"].ConnectionString;
                     con = new SqlConnection(constring);
                 }
                 else
