@@ -1,0 +1,90 @@
+﻿@model MpTradingSytemMVC2.Models.Prezzi
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Prezzi</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Titoli.NomeTitolo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Titoli.NomeTitolo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Data)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Apertura)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Apertura)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Chiusura)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Chiusura)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Massimo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Massimo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Minimo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Minimo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Volume)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Volume)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SimboloTitolo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SimboloTitolo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Segnalazioni)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Segnalazioni)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.IdPrezzo }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,139 @@
+﻿@model MpTradingSytemMVC2.Models.Prezzi
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@Html.ActionLink("Carica Prezzi", "CaricaPrezzi")
+
+@if (Model.DatiPrezzi != null)
+{
+    //Guida http://www.c-sharpcorner.com/code/2910/mvc-web-grid-using-dynamic-data-table.aspx
+    //Guida per il paging https://www.mitechdev.com/2016/07/implementing-custom-paging-in-webgrid.html
+    List<dynamic>
+        obj1 = new List<dynamic>
+            ();
+    obj1 = Model.DatiPrezzi;
+    int cntRow = Model.totalRowsPrezzi;
+    var grid = new WebGrid(canPage: true, rowsPerPage: 5, fieldNamePrefix: "op", pageFieldName: "Page", canSort: false); //ajaxUpdateContainerId: "grid1",
+    grid.Bind(obj1, rowCount: cntRow, autoSortAndPage: false);
+    grid.Pager(WebGridPagerModes.NextPrevious);
+    /* rowCount: cntRow,*/
+
+    //per una generazione automatica delle colonne
+    @grid.GetHtml(columns: Model.ColsPrezzi,
+        tableStyle: "table", headerStyle: "gridHead", footerStyle: "gridFooter", rowStyle: "gridRow", alternatingRowStyle: "gridAltRow")
+
+    @*@grid.GetHtml(tableStyle: "table", headerStyle: "gridHead", footerStyle: "gridFooter", rowStyle: "gridRow", alternatingRowStyle: "gridAltRow",
+                        columns: grid.Columns(
+                                           grid.Column("ID_OPERAZIONE", style: "mobile"),
+                                           grid.Column("CDC", style: "mobile"),
+                                           grid.Column("DESCRIZIONE", style: "mobile"),
+                                          grid.Column("PROGETTO"),
+                                           // grid.Column(format: @<input type="hidden" name="PROGETTO" />),
+                                           grid.Column("SUB-PROGETTO", style: "nomobile"),
+                                           grid.Column("LAVORAZIONE INTERNA", style: "nomobile"),
+                                           grid.Column("FORNITORE", style: "nomobile"),
+                                           grid.Column("Q_PRODOTTO", style: "nomobile"),
+                                           grid.Column("COSTO OPE", style: "nomobile"),
+                                           grid.Column("N GIORNI PREAVV", style: "nomobile"),
+                                           grid.Column(
+                                                      header: "details",
+                                                      style: "mobile",
+                                                      format: item => new HtmlString(Html.ActionLink("Dettagli", "Details", new { ID = item.ID_OPERAZIONE }).ToString())
+                                                  ),
+                                            grid.Column(
+                                                      header: "SubOperazione",
+                                                      style: "mobile",
+                                                      format: item => new HtmlString(Html.ActionLink("SubOperazione", "Index", new { ID_OP = item.ID_OPERAZIONE }).ToString())
+                                                  ),
+                                           grid.Column(
+                                                      header: "",
+                                                      style: "mobile",
+                                                      format: item => new HtmlString(Html.ActionLink("Modifica", "Edit", new { ID = item.ID_OPERAZIONE }).ToString())
+                                                  ),
+
+                                            grid.Column(
+                                                      header: "",
+                                                      style: "mobile",
+                                                      format: item => new HtmlString(Html.ActionLink("Elimina", "Delete", new { ID = item.ID_OPERAZIONE }).ToString())
+                                                  )
+                                       )
+                                    )*@
+}
+@*<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Titoli.NomeTitolo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Data)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apertura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Chiusura)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Massimo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Minimo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Volume)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SimboloTitolo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Segnalazioni)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Titoli.NomeTitolo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Data)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Apertura)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Chiusura)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Massimo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Minimo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Volume)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SimboloTitolo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Segnalazioni)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.IdPrezzo }) |
+            @Html.ActionLink("Details", "Details", new { id=item.IdPrezzo }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.IdPrezzo })
+        </td>
+    </tr>
+}*@
+
+</table>

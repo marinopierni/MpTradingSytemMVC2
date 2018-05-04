@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="MpTradingSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Prezzi">
+          <Key>
+            <PropertyRef Name="IdPrezzo" />
+          </Key>
+          <Property Name="IdPrezzo" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Data" Type="datetime" Nullable="false" />
+          <Property Name="Apertura" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Chiusura" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Massimo" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Minimo" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Volume" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="SimboloTitolo" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="IdTitolo" Type="bigint" />
+          <Property Name="Segnalazioni" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Titoli">
+          <Key>
+            <PropertyRef Name="IdTitolo" />
+          </Key>
+          <Property Name="IdTitolo" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NomeTitolo" Type="nchar" MaxLength="200" Nullable="false" />
+          <Property Name="Simbolo" Type="nchar" MaxLength="10" />
+          <Property Name="UltimoScambio" Type="nchar" MaxLength="30" />
+          <Property Name="Variazione" Type="nchar" MaxLength="30" />
+          <Property Name="Volume" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <Association Name="FK_Prezzi_Titoli">
+          <End Role="Titoli" Type="Self.Titoli" Multiplicity="0..1" />
+          <End Role="Prezzi" Type="Self.Prezzi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Titoli">
+              <PropertyRef Name="IdTitolo" />
+            </Principal>
+            <Dependent Role="Prezzi">
+              <PropertyRef Name="IdTitolo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MpTradingSystemModelStoreContainer">
+          <EntitySet Name="Prezzi" EntityType="Self.Prezzi" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Titoli" EntityType="Self.Titoli" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Prezzi_Titoli" Association="Self.FK_Prezzi_Titoli">
+            <End Role="Titoli" EntitySet="Titoli" />
+            <End Role="Prezzi" EntitySet="Prezzi" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MpTradingSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Prezzi">
+          <Key>
+            <PropertyRef Name="IdPrezzo" />
+          </Key>
+          <Property Name="IdPrezzo" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Data" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Apertura" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Chiusura" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Massimo" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Minimo" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Volume" Type="Decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="SimboloTitolo" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="IdTitolo" Type="Int64" />
+          <Property Name="Segnalazioni" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Titoli" Relationship="Self.FK_Prezzi_Titoli" FromRole="Prezzi" ToRole="Titoli" />
+        </EntityType>
+        <EntityType Name="Titoli">
+          <Key>
+            <PropertyRef Name="IdTitolo" />
+          </Key>
+          <Property Name="IdTitolo" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NomeTitolo" Type="String" MaxLength="200" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Simbolo" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="UltimoScambio" Type="String" MaxLength="30" FixedLength="true" Unicode="true" />
+          <Property Name="Variazione" Type="String" MaxLength="30" FixedLength="true" Unicode="true" />
+          <Property Name="Volume" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="Prezzi" Relationship="Self.FK_Prezzi_Titoli" FromRole="Titoli" ToRole="Prezzi" />
+        </EntityType>
+        <Association Name="FK_Prezzi_Titoli">
+          <End Role="Titoli" Type="Self.Titoli" Multiplicity="0..1" />
+          <End Role="Prezzi" Type="Self.Prezzi" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Titoli">
+              <PropertyRef Name="IdTitolo" />
+            </Principal>
+            <Dependent Role="Prezzi">
+              <PropertyRef Name="IdTitolo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Prezzi" EntityType="Self.Prezzi" />
+          <EntitySet Name="Titoli" EntityType="Self.Titoli" />
+          <AssociationSet Name="FK_Prezzi_Titoli" Association="Self.FK_Prezzi_Titoli">
+            <End Role="Titoli" EntitySet="Titoli" />
+            <End Role="Prezzi" EntitySet="Prezzi" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MpTradingSystemModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="Prezzi">
+            <EntityTypeMapping TypeName="MpTradingSystemModel.Prezzi">
+              <MappingFragment StoreEntitySet="Prezzi">
+                <ScalarProperty Name="IdPrezzo" ColumnName="IdPrezzo" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Apertura" ColumnName="Apertura" />
+                <ScalarProperty Name="Chiusura" ColumnName="Chiusura" />
+                <ScalarProperty Name="Massimo" ColumnName="Massimo" />
+                <ScalarProperty Name="Minimo" ColumnName="Minimo" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+                <ScalarProperty Name="SimboloTitolo" ColumnName="SimboloTitolo" />
+                <ScalarProperty Name="IdTitolo" ColumnName="IdTitolo" />
+                <ScalarProperty Name="Segnalazioni" ColumnName="Segnalazioni" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Titoli">
+            <EntityTypeMapping TypeName="MpTradingSystemModel.Titoli">
+              <MappingFragment StoreEntitySet="Titoli">
+                <ScalarProperty Name="IdTitolo" ColumnName="IdTitolo" />
+                <ScalarProperty Name="NomeTitolo" ColumnName="NomeTitolo" />
+                <ScalarProperty Name="Simbolo" ColumnName="Simbolo" />
+                <ScalarProperty Name="UltimoScambio" ColumnName="UltimoScambio" />
+                <ScalarProperty Name="Variazione" ColumnName="Variazione" />
+                <ScalarProperty Name="Volume" ColumnName="Volume" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Nessuno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
